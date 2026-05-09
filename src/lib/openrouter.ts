@@ -21,11 +21,12 @@ export function getOpenRouterClient(): OpenAI {
 // Free models available on OpenRouter (no credit card needed)
 // This is safe to import from client components (no secrets here)
 export const FREE_MODELS = [
-  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (Recommended)' },
-  { id: 'google/gemma-3-27b-it:free', name: 'Google Gemma 3 27B' },
-  { id: 'deepseek/deepseek-chat-v3.1:free', name: 'DeepSeek V3.1' },
-  { id: 'qwen/qwen-2.5-72b-instruct:free', name: 'Qwen 2.5 72B' },
+  { id: 'openai/gpt-oss-120b:free', name: 'GPT-OSS 120B (Recommended)' },
+  { id: 'minimax/minimax-m2.5:free', name: 'MiniMax M2.5' },
+  { id: 'google/gemma-4-31b-it:free', name: 'Google Gemma 4 31B' },
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B' },
+  { id: 'nvidia/nemotron-3-super-120b-a12b:free', name: 'Nvidia Nemotron 120B' },
 ] as const;
 
 export const DEFAULT_MODEL = FREE_MODELS[0].id;
-export const FALLBACK_MODELS = [FREE_MODELS[1].id, FREE_MODELS[2].id, FREE_MODELS[3].id] as const;
+export const FALLBACK_MODELS = [FREE_MODELS[1].id, FREE_MODELS[2].id, FREE_MODELS[3].id, FREE_MODELS[4].id] as const;
