@@ -15,17 +15,22 @@ export async function syncUserToDatabase(userId: string): Promise<DbUser | null>
   try {
     const adminClient = createAdminClient();
 
-    const { data: existingUser } = await adminClient
+    const { data: existingUser, error: selectError } = await adminClient
       .from('users')
       .select(USER_FIELDS)
       .eq('clerk_id', userId)
       .single();
+
+    if (selectError && selectError.code !== 'PGRST116') {
+      console.error('DB select error:', selectError.code, selectError.message);
+    }
 
     if (existingUser) {
       return existingUser as DbUser;
     }
 
     // Fetch user details from Clerk
+    console.log('User not found in DB, fetching from Clerk for:', userId);
     const client = await clerkClient();
     const clerkUser = await client.users.getUser(userId);
 
