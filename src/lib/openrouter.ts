@@ -21,10 +21,10 @@ export function getOpenRouterClient(): OpenAI {
 // Free models available on OpenRouter (no credit card needed)
 // This is safe to import from client components (no secrets here)
 export const FREE_MODELS = [
-  { id: 'inclusionai/ling-2.6-1t:free', name: 'InclusionAI Ling 1T (Recommended)' },
-  { id: 'minimax/minimax-m2.5:free', name: 'MiniMax M2.5' },
-  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B' },
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B (Recommended)' },
   { id: 'google/gemma-3-27b-it:free', name: 'Google Gemma 3 27B' },
+  { id: 'deepseek/deepseek-chat-v3.1:free', name: 'DeepSeek V3.1' },
+  { id: 'qwen/qwen-2.5-72b-instruct:free', name: 'Qwen 2.5 72B' },
 ] as const;
 
 export const DEFAULT_MODEL = FREE_MODELS[0].id;

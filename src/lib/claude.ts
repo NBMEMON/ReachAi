@@ -142,10 +142,10 @@ async function callWithFallback(
       return completion.choices[0]?.message?.content || '';
     } catch (error: any) {
       lastError = error;
-      if (error?.status === 429 || error?.status === 503) {
+      if (error?.status === 429 || error?.status === 503 || error?.status === 404) {
         console.warn(`Model ${model} returned ${error.status}, trying next fallback...`);
         // Brief delay before trying next model to avoid hammering the API
-        await sleep(2000);
+        await sleep(error.status === 404 ? 0 : 2000);
         continue;
       }
       // Non-retryable error — throw immediately
