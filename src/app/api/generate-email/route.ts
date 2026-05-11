@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import * as Sentry from '@sentry/nextjs';
 import { buildEmailPrompt, generateEmail } from '@/lib/claude';
 import { createAdminClient } from '@/lib/supabase';
 import { syncUserToDatabase, resetUsageIfNeeded } from '@/lib/auth-sync';
 import { PLANS } from '@/config/plans';
+import { rateLimiters, rateLimitExceeded } from '@/lib/ratelimit';
 import type { GenerateEmailRequest } from '@/types';
 
 // AI generation with multi-model fallback can take up to ~30 s.
@@ -16,6 +18,9 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { success: rlSuccess, limit: rlLimit, reset: rlReset } = await rateLimiters.generateEmail.limit(userId);
+    if (!rlSuccess) return rateLimitExceeded(rlLimit, rlReset);
 
     const body: GenerateEmailRequest = await req.json();
 
@@ -83,6 +88,7 @@ export async function POST(req: NextRequest) {
           { status: 503 }
         );
       }
+      Sentry.captureException(apiError, { tags: { route: 'generate-email', phase: 'ai-generation' } });
       return NextResponse.json(
         { error: apiError instanceof Error ? apiError.message : 'AI generation failed. Please try again.' },
         { status: 500 }
@@ -116,6 +122,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Email generation error:', error);
+    Sentry.captureException(error, { tags: { route: 'generate-email' } });
     return NextResponse.json(
       { error: 'Failed to generate email' },
       { status: 500 }

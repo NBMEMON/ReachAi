@@ -9,7 +9,12 @@ const isProtectedRoute = createRouteMatcher([
   '/api/((?!webhooks/stripe).*)',
 ]);
 
+// Sentry tunnel — must never be intercepted by auth middleware
+const isSentryTunnel = createRouteMatcher(['/monitoring(.*)']);
+
 export default clerkMiddleware(async (auth, req) => {
+  if (isSentryTunnel(req)) return;
+
   if (isProtectedRoute(req)) {
     const { userId } = await auth();
     if (!userId) {

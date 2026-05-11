@@ -1,9 +1,8 @@
 import type { NextConfig } from 'next';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-
-  // Remove the X-Powered-By: Next.js response header
   poweredByHeader: false,
 
   async headers() {
@@ -11,13 +10,9 @@ const nextConfig: NextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Prevent the page from being embedded in iframes (clickjacking)
           { key: 'X-Frame-Options', value: 'DENY' },
-          // Stop browsers from MIME-sniffing the content type
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // Only send the origin in the Referer header for cross-origin requests
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // Disable browser features that the app does not use
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
@@ -25,4 +20,24 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Suppress build output unless running in CI
+  silent: !process.env.CI,
+
+  // Proxy Sentry requests through /monitoring to bypass ad-blockers
+  tunnelRoute: '/monitoring',
+
+  // Upload source maps for readable production stack traces
+  // Requires SENTRY_AUTH_TOKEN environment variable
+  widenClientFileUpload: true,
+
+  webpack: {
+    treeshake: {
+      // Strip Sentry's internal debug logging from production bundles
+      removeDebugLogging: true,
+    },
+  },
+});

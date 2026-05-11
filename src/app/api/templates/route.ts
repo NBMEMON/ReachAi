@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/lib/supabase';
 import { PLANS } from '@/config/plans';
+import { rateLimiters, rateLimitExceeded } from '@/lib/ratelimit';
 import type { TemplateCategory } from '@/types';
 
 const VALID_CATEGORIES: TemplateCategory[] = [
@@ -14,6 +16,9 @@ export async function GET(req: NextRequest) {
     if (!clerkId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { success, limit, reset } = await rateLimiters.templates.limit(clerkId);
+    if (!success) return rateLimitExceeded(limit, reset);
 
     const supabase = createAdminClient();
 
@@ -38,6 +43,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(templates);
   } catch (error) {
     console.error('Templates fetch error:', error);
+    Sentry.captureException(error, { tags: { route: 'templates', method: 'GET' } });
     return NextResponse.json({ error: 'Failed to fetch templates' }, { status: 500 });
   }
 }
@@ -48,6 +54,9 @@ export async function POST(req: NextRequest) {
     if (!clerkId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { success, limit, reset } = await rateLimiters.templates.limit(clerkId);
+    if (!success) return rateLimitExceeded(limit, reset);
 
     const body = await req.json();
     const { name, description, prompt_template, category } = body;
@@ -147,6 +156,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
     console.error('Template creation error:', error);
+    Sentry.captureException(error, { tags: { route: 'templates', method: 'POST' } });
     return NextResponse.json({ error: 'Failed to create template' }, { status: 500 });
   }
 }

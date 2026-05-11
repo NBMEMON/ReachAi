@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import * as Sentry from '@sentry/nextjs';
 import { summarizeScrapedContent } from '@/lib/claude';
 import { syncUserToDatabase, resetUsageIfNeeded } from '@/lib/auth-sync';
 import { createAdminClient } from '@/lib/supabase';
 import { PLANS } from '@/config/plans';
+import { rateLimiters, rateLimitExceeded } from '@/lib/ratelimit';
 import * as cheerio from 'cheerio';
 
 // External HTTP fetch (10 s timeout) + AI summarization can exceed 10 s.
@@ -57,6 +59,9 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { success, limit, reset } = await rateLimiters.scrapeProspect.limit(userId);
+    if (!success) return rateLimitExceeded(limit, reset);
 
     // Sync user, reset monthly counters if needed, then check limits
     const rawUser = await syncUserToDatabase(userId);
@@ -144,6 +149,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(scrapedData);
   } catch (error) {
     console.error('Scraping error:', error);
+    Sentry.captureException(error, { tags: { route: 'scrape-prospect' } });
     return NextResponse.json(
       { error: 'Failed to scrape website' },
       { status: 500 }

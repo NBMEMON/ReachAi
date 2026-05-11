@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import * as Sentry from '@sentry/nextjs';
 import { syncUserToDatabase, resetUsageIfNeeded } from '@/lib/auth-sync';
 import { PLANS } from '@/config/plans';
 
@@ -29,6 +30,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Usage fetch error:', error);
+    Sentry.captureException(error, { tags: { route: 'usage' } });
     return NextResponse.json({ error: 'Failed to fetch usage' }, { status: 500 });
   }
 }
