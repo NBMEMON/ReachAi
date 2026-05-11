@@ -30,9 +30,24 @@ const posts = [
   },
 ];
 
-export const metadata = {
-  title: 'Blog — ReachAI',
-  description: 'Expert insights on cold email, sales outreach, and AI personalization.',
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description:
+    'Expert insights on cold email strategy, sales outreach, and AI-powered personalization. Tips to improve your open rates and book more meetings.',
+  alternates: { canonical: 'https://reachai.app/blog' },
+  openGraph: {
+    title: 'ReachAI Blog — Cold Email Tips & Sales Outreach Insights',
+    description:
+      'Expert insights on cold email strategy, sales outreach, and AI-powered personalization.',
+    url: 'https://reachai.app/blog',
+  },
+  twitter: {
+    title: 'ReachAI Blog — Cold Email Tips & Sales Outreach Insights',
+    description:
+      'Expert insights on cold email, sales outreach, and AI personalization.',
+  },
 };
 
 export default function BlogPage() {

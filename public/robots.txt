@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Public pages
+Allow: /pricing
+Allow: /about
+Allow: /blog
+Allow: /contact
+Allow: /changelog
+Allow: /docs
+Allow: /help
+Allow: /privacy
+Allow: /terms
+
+# Disallow authenticated/private routes
+Disallow: /dashboard
+Disallow: /history
+Disallow: /templates
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://reachai.app/sitemap.xml

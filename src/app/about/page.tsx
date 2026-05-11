@@ -4,8 +4,21 @@ import { Sparkles, Users, Target, Heart } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About ReachAI — Our Mission',
-  description: 'ReachAI helps sales professionals write hyper-personalized cold emails at scale using AI. Learn about our mission, team, and values.',
+  title: 'About',
+  description:
+    'ReachAI helps sales professionals write hyper-personalized cold emails at scale using AI. Learn about our mission, values, and the technology behind the product.',
+  alternates: { canonical: 'https://reachai.app/about' },
+  openGraph: {
+    title: 'About ReachAI — Our Mission',
+    description:
+      'ReachAI helps sales professionals write hyper-personalized cold emails at scale using AI.',
+    url: 'https://reachai.app/about',
+  },
+  twitter: {
+    title: 'About ReachAI — Our Mission',
+    description:
+      'ReachAI helps sales professionals write hyper-personalized cold emails at scale using AI.',
+  },
 };
 
 export default function AboutPage() {

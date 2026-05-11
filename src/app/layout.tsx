@@ -10,30 +10,52 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+const BASE_URL = 'https://reachai.app';
+
 export const metadata: Metadata = {
-  title: 'ReachAI — AI-Powered Cold Email Personalization',
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'ReachAI — AI-Powered Cold Email Generator',
+    template: '%s | ReachAI',
+  },
   description:
-    'Generate hyper-personalized cold emails in seconds with AI. Boost your response rates by 3x with intelligent prospect research and custom email generation.',
+    'Generate hyper-personalized cold emails in seconds. AI scrapes prospect websites and writes emails that get replies.',
   keywords: [
     'cold email',
-    'AI email',
-    'email personalization',
+    'AI email generator',
     'sales outreach',
+    'email personalization',
     'cold outreach',
     'AI sales tool',
+    'prospect research',
+    'cold email software',
   ],
+  authors: [{ name: 'ReachAI', url: BASE_URL }],
+  creator: 'ReachAI',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
   openGraph: {
-    title: 'ReachAI — AI-Powered Cold Email Personalization',
+    title: 'ReachAI — AI-Powered Cold Email Generator',
     description:
-      'Generate hyper-personalized cold emails in seconds. Boost your response rates by 3x.',
+      'Generate hyper-personalized cold emails in seconds. AI scrapes prospect websites and writes emails that get replies.',
     type: 'website',
-    url: 'https://reachai.app',
+    url: BASE_URL,
+    siteName: 'ReachAI',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'ReachAI — AI Cold Email Generator' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ReachAI — AI-Powered Cold Email Personalization',
+    title: 'ReachAI — AI-Powered Cold Email Generator',
     description:
-      'Generate hyper-personalized cold emails in seconds. Boost your response rates by 3x.',
+      'Generate hyper-personalized cold emails in seconds. AI scrapes prospect websites and writes emails that get replies.',
+    images: ['/og-image.png'],
+    creator: '@reachai',
+  },
+  alternates: {
+    canonical: BASE_URL,
   },
 };
 
