@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -24,7 +25,6 @@ export default function SettingsPage() {
   const [usage, setUsage] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(FREE_MODELS[0].id);
-  const [modelSaved, setModelSaved] = useState(false);
   const { isSignedIn } = useAuth();
   const router = useRouter();
 
@@ -138,10 +138,7 @@ export default function SettingsPage() {
                     {FREE_MODELS.map((model) => (
                       <button
                         key={model.id}
-                        onClick={() => {
-                          setSelectedModel(model.id);
-                          setModelSaved(false);
-                        }}
+                        onClick={() => setSelectedModel(model.id)}
                         className={cn(
                           'w-full flex items-center justify-between p-4 rounded-xl border transition-all text-left',
                           selectedModel === model.id
@@ -174,13 +171,12 @@ export default function SettingsPage() {
                     <Button
                       onClick={() => {
                         localStorage.setItem('reachai_preferred_model', selectedModel);
-                        setModelSaved(true);
-                        setTimeout(() => setModelSaved(false), 2000);
+                        toast.success('Settings updated');
                       }}
                       size="lg"
                       className="px-8"
                     >
-                      {modelSaved ? '✓ Saved!' : 'Save Preference'}
+                      Save Preference
                     </Button>
                   </div>
 
